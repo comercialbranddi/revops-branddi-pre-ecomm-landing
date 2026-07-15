@@ -136,6 +136,25 @@
   .field input::placeholder { color: #4b5670; }
   .field .req { color: var(--radar); }
 
+  /* Cargo = 2 dropdowns (Senioridade + Área), igual ao formulário do estande */
+  .cargo-selects { display: flex; flex-direction: column; gap: 8px; }
+  .cargo-selects select {
+    width: 100%; padding: 11px 13px;
+    background: #0a0e1a; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 14px;
+    transition: border-color 0.15s; cursor: pointer;
+    appearance: none; -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%232dd4bf' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+  }
+  .cargo-selects select:not(.has-value) { color: #4b5670; }
+  .cargo-selects select:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+
   button.submit {
     width: 100%; padding: 13px; margin-top: 6px;
     background: var(--accent); color: #fff; border: none;
@@ -243,8 +262,8 @@
             <input type="email" id="fEmail" required placeholder="voce@suaempresa.com">
           </div>
           <div class="field">
-            <label>Cargo</label>
-            <input type="text" id="fCargo" placeholder="Opcional">
+            <label>Cargo <span style="font-weight:400;color:var(--text-dim)">(opcional)</span></label>
+            <div class="cargo-selects" id="cargoSelects"></div>
           </div>
           <div class="field">
             <label>Telefone</label>
@@ -277,6 +296,33 @@
   // ── Config ──
   var LEAD_ENDPOINT_URL = 'https://rpqfxrmqsgiqzkroxemk.supabase.co/functions/v1/pre-ecomm-lead';
 
+  // ── Cargo = Senioridade + Área (mesmas listas do formulário do estande) ──
+  var SENIORIDADES = ['Sócio/Founder', 'C-Level', 'Diretor(a)', 'Gerente/Head', 'Coordenador(a)', 'Analista/Especialista'];
+  var AREAS = ['Marketing', 'E-commerce', 'Growth/Performance', 'Mídia/Tráfego', 'Vendas/Comercial', 'Produto', 'Tecnologia', 'Operações/Logística'];
+
+  function initCargoSelects(container) {
+    function opt(key, placeholder, items) {
+      var html = '<select class="cargo-select" data-key="' + key + '" aria-label="' + placeholder + '">';
+      html += '<option value="">' + placeholder + '</option>';
+      for (var i = 0; i < items.length; i++) html += '<option value="' + items[i] + '">' + items[i] + '</option>';
+      return html + '</select>';
+    }
+    container.innerHTML = opt('senioridade', 'Senioridade', SENIORIDADES) + opt('area', 'Área', AREAS);
+    var selects = container.querySelectorAll('.cargo-select');
+    function mark(s) { if (s.value) s.classList.add('has-value'); else s.classList.remove('has-value'); }
+    for (var i = 0; i < selects.length; i++) {
+      (function (s) { s.addEventListener('change', function () { mark(s); }); })(selects[i]);
+    }
+    return {
+      getValue: function () {
+        var sen = container.querySelector('.cargo-select[data-key="senioridade"]').value;
+        var area = container.querySelector('.cargo-select[data-key="area"]').value;
+        return [sen, area].filter(Boolean).join(' · ');
+      }
+    };
+  }
+  var cargoControl = initCargoSelects(document.getElementById('cargoSelects'));
+
   var form = document.getElementById('leadForm');
   var btn = document.getElementById('btnSubmit');
   var errorMsg = document.getElementById('errorMsg');
@@ -294,7 +340,7 @@
       nome: document.getElementById('fNome').value.trim(),
       empresa: document.getElementById('fEmpresa').value.trim(),
       email: document.getElementById('fEmail').value.trim(),
-      cargo: document.getElementById('fCargo').value.trim(),
+      cargo: cargoControl.getValue(),
       telefone: document.getElementById('fTelefone').value.trim(),
       origem: 'pre-cadastro-linkedin',
     };
