@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Branddi — Descubra quem está roubando cliques da sua marca</title>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg-elevated: #10152a;
+    --border: #1e2740;
+    --text: #e8ecf5;
+    --text-dim: #8a94ad;
+    --accent: #3b82f6;
+    --accent-glow: #3b82f680;
+    --gold: #f5b942;
+    --radar: #2dd4bf;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+  .eyebrow {
+    font-family: "SF Mono", "Roboto Mono", Consolas, monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--radar);
+  }
+
+  /* ── Radar signature element ── */
+  .radar-wrap {
+    position: absolute;
+    top: -120px; right: -120px;
+    width: 480px; height: 480px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .radar-ring {
+    position: absolute; border: 1px solid var(--radar);
+    border-radius: 50%; opacity: 0;
+    animation: radar-pulse 3.5s ease-out infinite;
+  }
+  .radar-ring:nth-child(1) { width: 100%; height: 100%; top: 0; left: 0; animation-delay: 0s; }
+  .radar-ring:nth-child(2) { width: 100%; height: 100%; top: 0; left: 0; animation-delay: 1.15s; }
+  .radar-ring:nth-child(3) { width: 100%; height: 100%; top: 0; left: 0; animation-delay: 2.3s; }
+  @keyframes radar-pulse {
+    0%   { transform: scale(0.15); opacity: 0.9; }
+    100% { transform: scale(1); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .radar-ring { animation: none; opacity: 0.15; }
+  }
+
+  .page { max-width: 1080px; margin: 0 auto; padding: 0 24px; position: relative; }
+  header.top {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 28px 0; position: relative; z-index: 1;
+  }
+  .logo { font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  .logo span { color: var(--radar); }
+
+  main.hero {
+    position: relative; overflow: hidden;
+    padding: 56px 0 40px;
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: start;
+  }
+  @media (max-width: 860px) {
+    main.hero { grid-template-columns: 1fr; padding-top: 24px; }
+    .radar-wrap { width: 320px; height: 320px; top: -80px; right: -80px; }
+  }
+
+  .hero-copy { position: relative; z-index: 1; }
+  .hero-copy h1 {
+    font-size: 40px; line-height: 1.15; font-weight: 700;
+    letter-spacing: -0.01em; margin: 14px 0 18px; max-width: 560px;
+  }
+  .hero-copy h1 em {
+    font-style: normal; color: var(--radar);
+  }
+  .hero-copy p.lede {
+    font-size: 17px; color: var(--text-dim); max-width: 480px; margin-bottom: 28px;
+  }
+
+  .perk-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 8px; }
+  .perk {
+    display: flex; align-items: flex-start; gap: 12px;
+    font-size: 15px; color: var(--text);
+  }
+  .perk .ico {
+    flex-shrink: 0; width: 22px; height: 22px; border-radius: 6px;
+    background: rgba(59,130,246,0.15); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .perk.gold .ico { background: rgba(245,185,66,0.18); color: var(--gold); }
+
+  .raffle-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 22px; padding: 9px 14px;
+    background: rgba(245,185,66,0.1); border: 1px solid rgba(245,185,66,0.35);
+    border-radius: 999px; font-size: 13px; color: var(--gold); font-weight: 600;
+  }
+
+  /* ── Form card ── */
+  .card {
+    position: relative; z-index: 1;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .card h2 { font-size: 18px; margin-bottom: 6px; }
+  .card .sub { font-size: 13px; color: var(--text-dim); margin-bottom: 22px; }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block; font-size: 12px; color: var(--text-dim);
+    margin-bottom: 6px; font-weight: 600;
+  }
+  .field input {
+    width: 100%; padding: 11px 13px;
+    background: #0a0e1a; border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-size: 14px;
+    transition: border-color 0.15s;
+  }
+  .field input:focus {
+    outline: none; border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .field input::placeholder { color: #4b5670; }
+  .field .req { color: var(--radar); }
+
+  button.submit {
+    width: 100%; padding: 13px; margin-top: 6px;
+    background: var(--accent); color: #fff; border: none;
+    border-radius: 8px; font-size: 15px; font-weight: 700;
+    cursor: pointer; transition: background 0.15s, transform 0.1s;
+  }
+  button.submit:hover { background: #2f6fe0; }
+  button.submit:active { transform: scale(0.99); }
+  button.submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .fine-print {
+    font-size: 11.5px; color: var(--text-dim); margin-top: 12px; text-align: center;
+  }
+
+  .error-msg {
+    display: none; font-size: 13px; color: #f87171;
+    background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3);
+    border-radius: 8px; padding: 10px 12px; margin-bottom: 14px;
+  }
+
+  /* ── Confirmation state ── */
+  .confirm {
+    display: none; text-align: center; padding: 12px 4px;
+  }
+  .confirm .check {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(45,212,191,0.15); color: var(--radar);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; margin: 0 auto 18px;
+  }
+  .confirm h2 { font-size: 19px; margin-bottom: 10px; }
+  .confirm p { font-size: 14px; color: var(--text-dim); }
+  .confirm .timeline {
+    margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--border);
+    text-align: left; display: flex; flex-direction: column; gap: 12px;
+  }
+  .confirm .timeline .step {
+    display: flex; gap: 10px; font-size: 13px; color: var(--text-dim);
+  }
+  .confirm .timeline .step b { color: var(--text); }
+
+  footer.bottom {
+    text-align: center; padding: 40px 0 32px;
+    font-size: 12px; color: var(--text-dim);
+    border-top: 1px solid var(--border); margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <header class="top">
+    <div class="logo">Brand<span>di</span></div>
+    <div class="eyebrow">E-Commerce Brasil 2026</div>
+  </header>
+
+  <main class="hero">
+    <div class="radar-wrap">
+      <div class="radar-ring"></div>
+      <div class="radar-ring"></div>
+      <div class="radar-ring"></div>
+    </div>
+
+    <div class="hero-copy">
+      <div class="eyebrow">Diagnóstico gratuito</div>
+      <h1>Alguém pode estar <em>pagando pra aparecer</em> antes de você, nas buscas pelo nome da sua própria marca.</h1>
+      <p class="lede">Preencha antes do evento e receba, em até 30 minutos, um relatório mostrando quem está fazendo brand bidding contra a sua empresa — sem custo, sem compromisso.</p>
+
+      <div class="perk-list">
+        <div class="perk">
+          <span class="ico">✓</span>
+          <span>Relatório real, com concorrentes detectados no seu nome — não é só um formulário genérico.</span>
+        </div>
+        <div class="perk">
+          <span class="ico">✓</span>
+          <span>Direto no seu e-mail, sem precisar passar pelo estande no dia do evento.</span>
+        </div>
+        <div class="perk gold">
+          <span class="ico">🎁</span>
+          <span>Presentes no estande + sorteio de um <b>iPhone</b> pra quem passar por lá.</span>
+        </div>
+      </div>
+
+      <div class="raffle-tag">🎟️ Cadastro prévio = participação extra no sorteio do iPhone</div>
+    </div>
+
+    <div class="card">
+      <div id="formStep">
+        <h2>Peça seu diagnóstico</h2>
+        <div class="sub">Leva menos de 1 minuto.</div>
+
+        <div class="error-msg" id="errorMsg"></div>
+
+        <form id="leadForm">
+          <div class="field">
+            <label>Nome <span class="req">*</span></label>
+            <input type="text" id="fNome" required placeholder="Seu nome completo">
+          </div>
+          <div class="field">
+            <label>Empresa <span class="req">*</span></label>
+            <input type="text" id="fEmpresa" required placeholder="Nome da sua empresa">
+          </div>
+          <div class="field">
+            <label>E-mail corporativo <span class="req">*</span></label>
+            <input type="email" id="fEmail" required placeholder="voce@suaempresa.com">
+          </div>
+          <div class="field">
+            <label>Cargo</label>
+            <input type="text" id="fCargo" placeholder="Opcional">
+          </div>
+          <div class="field">
+            <label>Telefone</label>
+            <input type="tel" id="fTelefone" placeholder="Opcional">
+          </div>
+          <button type="submit" class="submit" id="btnSubmit">Quero meu diagnóstico</button>
+          <div class="fine-print">Seus dados são usados só pra gerar o relatório e organizar o sorteio do evento.</div>
+        </form>
+      </div>
+
+      <div id="confirmStep" class="confirm">
+        <div class="check">✓</div>
+        <h2>Recebido! Você já está no sorteio.</h2>
+        <p>Seu relatório está sendo gerado agora.</p>
+        <div class="timeline">
+          <div class="step">🔍 <span><b>Agora</b> — estamos analisando buscas pela sua marca</span></div>
+          <div class="step">📊 <span><b>Em até 30 minutos</b> — relatório completo chega no seu e-mail</span></div>
+          <div class="step">🤝 <span><b>No relatório</b> — link direto pra agendar uma conversa, se quiser</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bottom">
+    Branddi — Proteção de marca contra brand bidding, golpes e violações.
+  </footer>
+</div>
+
+<script>
+  // ── Config ──
+  var LEAD_ENDPOINT_URL = 'https://rpqfxrmqsgiqzkroxemk.supabase.co/functions/v1/pre-ecomm-lead';
+
+  var form = document.getElementById('leadForm');
+  var btn = document.getElementById('btnSubmit');
+  var errorMsg = document.getElementById('errorMsg');
+
+  function showError(msg) {
+    errorMsg.textContent = msg;
+    errorMsg.style.display = 'block';
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    errorMsg.style.display = 'none';
+
+    var payload = {
+      nome: document.getElementById('fNome').value.trim(),
+      empresa: document.getElementById('fEmpresa').value.trim(),
+      email: document.getElementById('fEmail').value.trim(),
+      cargo: document.getElementById('fCargo').value.trim(),
+      telefone: document.getElementById('fTelefone').value.trim(),
+      origem: 'pre-cadastro-linkedin',
+    };
+
+    if (!payload.nome || !payload.empresa || !payload.email) {
+      showError('Preenche nome, empresa e e-mail pra continuar.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    fetch(LEAD_ENDPOINT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+      .then(function (result) {
+        if (!result.ok || !result.data.success) {
+          throw new Error((result.data && result.data.error) || 'Falha ao enviar, tenta de novo.');
+        }
+        document.getElementById('formStep').style.display = 'none';
+        document.getElementById('confirmStep').style.display = 'block';
+      })
+      .catch(function (err) {
+        showError(err.message || 'Algo deu errado. Tenta de novo em alguns segundos.');
+        btn.disabled = false;
+        btn.textContent = 'Quero meu diagnóstico';
+      });
+  });
+</script>
+
+</body>
+</html>
