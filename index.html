@@ -301,6 +301,21 @@
   var SENIORIDADES = ['Sócio/Founder', 'C-Level', 'Diretor(a)', 'Gerente/Head', 'Coordenador(a)', 'Analista/Especialista'];
   var AREAS = ['Marketing', 'E-commerce', 'Growth/Performance', 'Mídia/Tráfego', 'Vendas/Comercial', 'Produto', 'Tecnologia', 'Operações/Logística'];
 
+  // ── Link de colaborador (?colab=slug) — atribui o lead a quem divulgou o link,
+  // pontuando no mesmo Placar do formoff (evento_placar_pontos). Slugs espelham
+  // a lista MEMBERS de formoff/app.js — manter as duas em sincronia manualmente.
+  var COLAB_SLUGS = {
+    'alicia': 'Alicia', 'ana-lidia': 'Ana Lídia', 'ana-vitoria': 'Ana Vitória',
+    'andre': 'André', 'diego-daminelli': 'Diego Daminelli', 'diego-t': 'Diego T',
+    'diogo': 'Diogo', 'fabiana': 'Fabiana', 'giovanna': 'Giovanna', 'gustavo': 'Gustavo',
+    'harylanne': 'Harylanne', 'ian': 'Ian', 'juliana': 'Juliana', 'laura': 'Laura',
+    'ligia': 'Ligia', 'luis': 'Luis', 'mayara': 'Mayara', 'miriam': 'Miriam',
+    'myriam': 'Myriam', 'nilson': 'Nilson', 'renan': 'Renan', 'roger': 'Roger',
+    'sergio': 'Sergio', 'stephanie': 'Stephanie', 'vanessa': 'Vanessa', 'victor': 'Victor'
+  };
+  var colabSlug = new URLSearchParams(window.location.search).get('colab');
+  var colabMember = colabSlug ? COLAB_SLUGS[colabSlug.toLowerCase()] : null;
+
   function initCargoSelects(container) {
     function opt(key, placeholder, items) {
       var html = '<select class="cargo-select" data-key="' + key + '" aria-label="' + placeholder + '">';
@@ -345,6 +360,7 @@
       telefone: document.getElementById('fTelefone').value.trim(),
       origem: 'pre-cadastro-linkedin',
     };
+    if (colabMember) payload.member = colabMember;
 
     if (!payload.nome || !payload.empresa || !payload.email) {
       showError('Preenche nome, empresa e e-mail pra continuar.');
