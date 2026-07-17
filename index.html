@@ -212,11 +212,19 @@
     text-align: center; font-size: 11px; letter-spacing: 0.1em;
     text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px;
   }
-  .sponsors .grid {
-    display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
-    gap: 14px;
+  .sponsors .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
   }
+  .sponsors .track {
+    display: flex; align-items: center; gap: 14px;
+    width: max-content;
+    animation: sponsors-scroll 32s linear infinite;
+  }
+  .sponsors .marquee:hover .track { animation-play-state: paused; }
   .sponsors .tile {
+    flex: 0 0 auto;
     display: flex; align-items: center; justify-content: center;
     width: 96px; height: 64px; border-radius: 10px;
     background: #ffffff; padding: 10px;
@@ -225,6 +233,13 @@
     max-width: 100%; max-height: 100%; object-fit: contain; display: block;
   }
   .sponsors .tile.dark { background: var(--bg-elevated); border: 1px solid var(--border); }
+  @keyframes sponsors-scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sponsors .track { animation: none; flex-wrap: wrap; justify-content: center; }
+  }
 </style>
 </head>
 <body>
@@ -313,21 +328,37 @@
 
   <div class="sponsors">
     <div class="label">Patrocinadores</div>
-    <div class="grid">
-      <div class="tile"><img src="sponsors/maismu.png" alt="+mu"></div>
-      <div class="tile dark"><img src="sponsors/dux.png" alt="Dux Human Health"></div>
-      <div class="tile"><img src="sponsors/panini.png" alt="Panini"></div>
-      <div class="tile"><img src="sponsors/ferracini.jpg" alt="Ferracini"></div>
-      <div class="tile"><img src="sponsors/probiotica.png" alt="Probiótica"></div>
-      <div class="tile"><img src="sponsors/drpeanut.png" alt="Dr. Peanut"></div>
-      <div class="tile"><img src="sponsors/soldiers.png" alt="Soldiers Nutrition"></div>
-      <div class="tile"><img src="sponsors/darklab.svg" alt="Dark Lab"></div>
-      <div class="tile"><img src="sponsors/aura.svg" alt="Aura Beauty"></div>
-      <div class="tile"><img src="sponsors/netshoes.png" alt="Netshoes"></div>
-      <div class="tile"><img src="sponsors/cacaushow.png" alt="Cacau Show"></div>
-      <div class="tile"><img src="sponsors/prohall.png" alt="Prohall Professional"></div>
-      <div class="tile"><img src="sponsors/skelt.png" alt="Skelt"></div>
-      <div class="tile"><img src="sponsors/privalia.png" alt="Privalia"></div>
+    <div class="marquee">
+      <div class="track">
+        <div class="tile"><img src="sponsors/maismu.png" alt="+mu"></div>
+        <div class="tile dark"><img src="sponsors/dux.png" alt="Dux Human Health"></div>
+        <div class="tile"><img src="sponsors/panini.png" alt="Panini"></div>
+        <div class="tile"><img src="sponsors/ferracini.jpg" alt="Ferracini"></div>
+        <div class="tile"><img src="sponsors/probiotica.png" alt="Probiótica"></div>
+        <div class="tile"><img src="sponsors/drpeanut.png" alt="Dr. Peanut"></div>
+        <div class="tile"><img src="sponsors/soldiers.png" alt="Soldiers Nutrition"></div>
+        <div class="tile"><img src="sponsors/darklab.svg" alt="Dark Lab"></div>
+        <div class="tile"><img src="sponsors/aura.svg" alt="Aura Beauty"></div>
+        <div class="tile"><img src="sponsors/netshoes.png" alt="Netshoes"></div>
+        <div class="tile"><img src="sponsors/cacaushow.png" alt="Cacau Show"></div>
+        <div class="tile"><img src="sponsors/prohall.png" alt="Prohall Professional"></div>
+        <div class="tile"><img src="sponsors/skelt.png" alt="Skelt"></div>
+        <div class="tile"><img src="sponsors/privalia.png" alt="Privalia"></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/maismu.png" alt=""></div>
+        <div class="tile dark" aria-hidden="true"><img src="sponsors/dux.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/panini.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/ferracini.jpg" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/probiotica.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/drpeanut.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/soldiers.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/darklab.svg" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/aura.svg" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/netshoes.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/cacaushow.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/prohall.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/skelt.png" alt=""></div>
+        <div class="tile" aria-hidden="true"><img src="sponsors/privalia.png" alt=""></div>
+      </div>
     </div>
   </div>
 
