@@ -73,11 +73,18 @@
   .page { max-width: 1080px; margin: 0 auto; padding: 0 24px; position: relative; }
   header.top {
     display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px 16px;
     padding: 28px 0; position: relative; z-index: 1;
   }
-  .logo { display: flex; align-items: center; }
+  .logo { display: flex; align-items: center; flex-shrink: 0; }
   .logo img { height: 28px; width: auto; display: block; }
-  .ecbr-logo { display: block; }
+  .ecbr-logo { display: block; height: 28px; width: auto; max-width: 55vw; }
+
+  @media (max-width: 480px) {
+    header.top { padding: 20px 0; }
+    .logo img { height: 20px; }
+    .ecbr-logo { height: 20px; max-width: 60vw; }
+  }
 
   main.hero {
     position: relative; overflow: hidden;
